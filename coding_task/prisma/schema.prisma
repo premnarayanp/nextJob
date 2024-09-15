@@ -1,0 +1,33 @@
+datasource db {
+  provider="mysql"
+  url=env("DATABASE_URL")  # Set up this in your .env
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Document {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  versions   Version[]
+}
+
+model Version {
+  id         Int      @id @default(autoincrement())
+  documentId Int
+  content    String
+  createdAt  DateTime @default(now())
+
+  document   Document @relation(fields: [documentId], references: [id])
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  password String
+  documents Document[]
+}
